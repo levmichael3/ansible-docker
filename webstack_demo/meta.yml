@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Your name
+  description: Describe your awesome application here.
+  company: Your company
+
+
+  license: license (GPLv2, CC-BY, etc)
+
+  min_ansible_container_version: 0.9.2
+
+
+  tags: []
