@@ -6,4 +6,4 @@ eval $(docker-machine env aws-sandbox)
 # All docker commands will be  set to interface with the remoted docker-machine
 
 
-## Use ansible-docker in /root/Development/ansible-docker/ansible_container_examples/webstack_demo/README
+## Use ansible-docker in webstack_demo/README
