@@ -1,0 +1,17 @@
+---
+- name: Temporarily Start MariaDB Server
+  shell: MySQLd --user=MySQL &
+
+- name: Create Initial Accounts
+  shell: MySQL -e "CREATE USER '{{ default_user }}'@'%' IDENTIFIED BY '{{ default_password }}';"
+
+- name: Grant Privileges to New Account
+  shell: MySQL -e "GRANT ALL ON *.* TO '{{ default_user }}'@'%' WITH GRANT OPTION;"
+
+- name: Create Default Databases
+  shell: MySQL -e "CREATE DATABASE {{ item }};"
+  with_items:
+    - "{{ databases }}"
+
+- name: Flush Privileges
+  shell: MySQL -e "FLUSH PRIVILEGES;"

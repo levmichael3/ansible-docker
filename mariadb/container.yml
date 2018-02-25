@@ -1,0 +1,16 @@
+version: "2"
+settings:
+
+  conductor:
+    base: ubuntu:16.04
+    roles_path:
+      - ./roles/
+
+  project_name: mariadb
+
+
+services:
+  mariadb_container:
+    roles:
+      - role: mariadb_role
+registries: {}
