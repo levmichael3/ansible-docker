@@ -63,6 +63,7 @@ docker-machine status aws-sandbox
 
 # pull the pushed images from local dev box to docker.hub into the docker-machine
 ```
+docker login
 docker -D pull levmichael3/webstack_demo-webserver
 ```
 
