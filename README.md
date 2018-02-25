@@ -56,7 +56,7 @@ Conductor terminated. Cleaning up.      command_rc=0 conductor_id=ac99b957a86a91
 # start the docker-machine
 ```
 docker-machine start aws-sandbox
-docker-machine regenerate-certs aws-sandbox
+docker-machine regenerate-certs -f aws-sandbox
 eval "$(docker-machine env aws-sandbox)"
 docker-machine status aws-sandbox
 ```
