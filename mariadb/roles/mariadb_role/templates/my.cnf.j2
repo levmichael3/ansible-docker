@@ -1,14 +1,14 @@
 # Ansible Container Generated MariaDB Config File
 [client]
-port            = 3306
-socket          = /var/lib/MySQL/MySQL.sock
+port   		= 3306
+socket 		= /var/lib/mysql/mysql.sock
 
 # The MariaDB server
-[MySQLd]
-user           = MySQL
-port            = 3306
-socket          = /var/lib/MySQL/MySQL.sock
-datadir         = /var/lib/MySQL
+[mysqld]
+user      = mysql
+port   		= 3306
+socket 		= /var/lib/mysql/mysql.sock
+datadir		= /var/lib/mysql
 bind-address = 0.0.0.0
 skip-external-locking
 key_buffer_size = {{ key_buffer_size }}
