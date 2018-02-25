@@ -1,9 +1,0 @@
-## First run docker-machine  -- based on dynamic exported env of user ~/.aws/credentials
-docker-machine create --amazonec2-region eu-west-1  --driver amazonec2 aws-sandbox
-## Then setup the env for docker to run infront of it
-eval $(docker-machine env aws-sandbox)
-## Then docker will be set to work on that docker machine
-# All docker commands will be  set to interface with the remoted docker-machine
-
-
-## Use ansible-docker in webstack_demo/README
