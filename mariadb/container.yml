@@ -1,14 +1,17 @@
 version: "2"
-settings:
+defaults:
+  default_user: "root"
+  default_password: "password"
+  databases:
+    - "TestDB1"
+    - "TestDB2"
+    - "TestDB3"
 
+settings:
   conductor:
     base: ubuntu:16.04
     roles_path:
       - ./roles/
-  {% if env %}
-  vars_files:
-    - variable_files/{{ envs }}.yml
-  {% endif %}  
   project_name: mariadb
 
 services:
