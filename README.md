@@ -74,5 +74,15 @@ docker run -d -p 80:8000 --name webserver levmichael3/webstack_demo-webserver:la
 
 # Use variable files with --var-files <file.yml>
 
-`ansible-container --vars-files variable_files/dogs.yml build --no-container-cache`
-`ansible-container --vars-file  /root/Development/ansible-docker/mariadb/variable_files/dogs.yml run`
+```
+ansible-container --vars-files variable_files/dogs.yml build --no-container-cache
+ansible-container --vars-file  /root/Development/ansible-docker/mariadb/variable_files/dogs.yml run
+```
+
+- Then `docker ps` shows dynamic port:
+```
+docker ps
+CONTAINER ID        IMAGE                                      COMMAND                  CREATED             STATUS              PORTS                    NAMES
+b6f5059f8077        mariadb-mariadb_container:20180226125105   "/usr/bin/dumb-init â€¦"   7 seconds ago       Up 6 seconds        0.0.0.0:3308->3306/tcp   mariadb_mariadb_container_1
+```
+
