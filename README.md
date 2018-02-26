@@ -75,3 +75,4 @@ docker run -d -p 80:8000 --name webserver levmichael3/webstack_demo-webserver:la
 # Use variable files with --var-files <file.yml>
 
 `ansible-container --vars-files variable_files/dogs.yml build --no-container-cache`
+`ansible-container --vars-file  /root/Development/ansible-docker/mariadb/variable_files/dogs.yml run`
