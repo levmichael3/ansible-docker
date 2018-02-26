@@ -6,6 +6,7 @@ defaults:
     - "TestDB1"
     - "TestDB2"
     - "TestDB3"
+  mysql_access_port: 3306
 
 settings:
   conductor:
@@ -19,4 +20,6 @@ services:
   mariadb_container:
     roles:
       - role: mariadb_role
+    ports:
+     - "{{ mysql_access_port }}:3306"
 registries: {}

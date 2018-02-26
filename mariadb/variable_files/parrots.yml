@@ -5,3 +5,4 @@ default_user: "king_parrot"
 default_password: "fruits"
 databases:
   - "fruits_data"
+mysql_access_port: 3307

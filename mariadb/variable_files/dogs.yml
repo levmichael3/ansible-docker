@@ -6,3 +6,4 @@ default_password: "barking"
 databases:
   - "cats"
   - "busses"
+mysql_access_port: 3308
