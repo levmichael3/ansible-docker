@@ -1,0 +1,14 @@
+---
+# defaults file for MySQL_role
+initialize_database: true
+default_user: "man"
+default_password: "Ithink"
+databases:
+  - "Food"
+  - "Sleep"
+
+#MySQL Basic Tuning for my.cnf
+key_buffer_size: "128K"
+max_allowed_packet: "20M"
+table_open_cache: 12
+sort_buffer_size: "128K"

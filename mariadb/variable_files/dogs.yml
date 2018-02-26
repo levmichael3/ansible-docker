@@ -1,0 +1,8 @@
+---
+# Development Defaults for MySQL role
+initialize_database: true
+default_user: "big_dog"
+default_password: "barking"
+databases:
+  - "cats"
+  - "busses"

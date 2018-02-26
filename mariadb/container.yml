@@ -12,10 +12,15 @@ settings:
     base: ubuntu:16.04
     roles_path:
       - ./roles/
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 7362fb1... Add dynamic var overriding by --extra-vars
   project_name: mariadb
+
 
 services:
   mariadb_container:
     roles:
-      - role: mariadb_role  
+      - role: mariadb_role
 registries: {}

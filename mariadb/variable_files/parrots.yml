@@ -1,0 +1,7 @@
+---
+# Development Defaults for MySQL role
+initialize_database: true
+default_user: "king_parrot"
+default_password: "fruits"
+databases:
+  - "fruits_data"
