@@ -13,9 +13,12 @@ settings:
     roles_path:
       - ./roles/
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> parent of 7362fb1... Add dynamic var overriding by --extra-vars
+=======
+>>>>>>> 658177f8f1a86090d48a686475eab2f27d1c98f3
   project_name: mariadb
 
 
