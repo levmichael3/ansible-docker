@@ -1,0 +1,100 @@
+  - name: Deploy webstack_demo
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - docker_service:
+            definition:
+                services: &id001
+                    webserver:
+                        image: https://docker.io/levmichael3/webstack_demo-webserver
+                        command: [/usr/bin/dumb-init, nginx, -c, /etc/nginx/nginx.conf]
+                        ports:
+                          - 80:8000
+                        user: nginx
+                version: '2'
+            state: present
+            project_name: webstack_demo
+        tags:
+          - start
+      - docker_service:
+            definition:
+                services: *id001
+                version: '2'
+            state: present
+            project_name: webstack_demo
+            restarted: true
+        tags:
+          - restart
+      - docker_service:
+            definition:
+                services: *id001
+                version: '2'
+            state: present
+            project_name: webstack_demo
+            stopped: true
+        tags:
+          - stop
+      - docker_service:
+            definition:
+                services: *id001
+                version: '2'
+            state: absent
+            project_name: webstack_demo
+            remove_volumes: yes
+        tags:
+          - destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: levmichael3/webstack_demo-webserver:deploy
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo-webserver:20180227093722
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo-webserver:latest
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: levmichael3/webstack_demo-webserver:1.0
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: levmichael3/webstack_demo-webserver:20180222165347
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: levmichael3/webstack_demo-webserver:latest
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: levmichael3/webstack_demo/webstack_demo-webserver:20180222165347
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo-webserver:20180222165347
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo/webstack_demo-webserver:1.0
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo/webstack_demo-webserver:20180222165347
+        tags: destroy
+      - docker_image:
+            state: absent
+            force: yes
+            name: webstack_demo-conductor:latest
+        tags: destroy
