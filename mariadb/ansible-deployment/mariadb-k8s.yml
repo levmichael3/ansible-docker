@@ -1,0 +1,118 @@
+  - name: Manage the lifecycle of mariadb-k8s on K8s
+    hosts: localhost
+    gather_facts: no
+    connection: local
+    # Include Ansible Kubernetes and OpenShift modules
+    roles:
+      - role: ansible.kubernetes-modules
+    vars_files: []
+    # Tasks for setting the application state. Valid tags include: start, stop, restart, destroy
+    tasks:
+      - name: Create namespace database
+        k8s_v1_namespace:
+            name: database
+            state: present
+        tags:
+          - start
+      - name: Destroy the application by removing namespace database
+        k8s_v1_namespace:
+            name: database
+            state: absent
+        tags:
+          - destroy
+      - name: Create service
+        k8s_v1_service:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: v1
+                kind: Service
+                metadata:
+                    name: mariadb-container
+                    namespace: database
+                    labels:
+                        app: database
+                        service: mariadb-container
+                spec:
+                    selector:
+                        app: database
+                        service: mariadb-container
+                    ports:
+                      - protocol: TCP
+                        targetPort: 3306
+                        name: port-3306-tcp
+                        port: 3306
+        tags:
+          - start
+      - name: Stop running containers by scaling replicas down to 0
+        k8s_v1beta1_deployment:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: extensions/v1beta1
+                kind: deployment
+                metadata:
+                    name: mariadb-container
+                    labels:
+                        app: database
+                        service: mariadb-container
+                    namespace: database
+                spec:
+                    template:
+                        metadata:
+                            labels:
+                                app: database
+                                service: mariadb-container
+                        spec:
+                            containers:
+                              - name: mariadb-container
+                                securityContext: {}
+                                state: present
+                                ports:
+                                  - protocol: TCP
+                                    containerPort: 3306
+                                command: [/usr/bin/dumb-init]
+                                args: [/usr/sbin/mysqld]
+                                image: https://index.docker.io/levmichael3/mariadb-k8s-mariadb-container:kubernetes
+                    replicas: 0
+                    strategy:
+                        type: RollingUpdate
+        tags:
+          - stop
+          - restart
+      - name: Create deployment, and scale replicas up
+        k8s_v1beta1_deployment:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: extensions/v1beta1
+                kind: deployment
+                metadata:
+                    name: mariadb-container
+                    labels:
+                        app: database
+                        service: mariadb-container
+                    namespace: database
+                spec:
+                    template:
+                        metadata:
+                            labels:
+                                app: database
+                                service: mariadb-container
+                        spec:
+                            containers:
+                              - name: mariadb-container
+                                securityContext: {}
+                                state: present
+                                ports:
+                                  - protocol: TCP
+                                    containerPort: 3306
+                                command: [/usr/bin/dumb-init]
+                                args: [/usr/sbin/mysqld]
+                                image: https://index.docker.io/levmichael3/mariadb-k8s-mariadb-container:kubernetes
+                    replicas: 1
+                    strategy:
+                        type: RollingUpdate
+        tags:
+          - start
+          - restart

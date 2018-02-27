@@ -27,7 +27,6 @@
     groups: mysql
     append: true
 
-
 - name: Install MySQL Server
   apt:
     name: mariadb-server
