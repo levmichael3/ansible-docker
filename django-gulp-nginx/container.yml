@@ -7,10 +7,12 @@ settings:
     volumes:
     - ${PWD}/temp-space:/tmp
 
+  k8s_auth:
+    config_file: /root/.kube/config
+
   k8s_namespace:
-    name: demo
-    display_name: Ansible Container Demo 
-    description: Django framework demo 
+    name: ansible-container-sandbox
+    display_name: Django Framework demo
 
 defaults:
   POSTGRES_USER: django
@@ -98,7 +100,10 @@ services:
     - 5432
 
 registries:
-   local_openshift:
-     url: https://local.openshift     # The push-to URL, created by chouseknecht.minishift-up role
-     namespace: demo
-     pull_from_url: 172.30.1.1:5000   # The pull-from URL from within minishift
+  docker:
+    url: https://index.docker.io/
+    namespace: levmichael3
+  openshift:
+    url: https://api.starter-us-west-1.openshift.com:443     # The push-to URL, created by chouseknecht.minishift-up role
+    namespace: sandbox-project
+#     pull_from_url: 172.30.1.1:5000   # The pull-from URL from within minishift

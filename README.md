@@ -88,8 +88,11 @@ b6f5059f8077        mariadb-mariadb_container:20180226125105   "/usr/bin/dumb-in
 
 # In order to use K8S or openshift update the config_file showing on http://docs.ansible.com/ansible-container/container_yml/reference.html#k8s-auth - use ` gcloud auth application-default login`
 
-
-
+* in container.yml : Project name MUST match :
+```
+k8s_namespace:
+    name: ansible-container-sandbox <<<<
+```
 # Deploy to K8S/Openshift
 
 Use `deploy` to deploy:
@@ -186,7 +189,7 @@ Conductor terminated. Cleaning up.      command_rc=0 conductor_id=9f51f494f19555
 - images are there:
 
 ```
-#  docker images levmichael3/*:openshift
+#docker images levmichael3/*:openshift
 REPOSITORY                             TAG                 IMAGE ID            CREATED             SIZE
 levmichael3/django-gulp-nginx-nginx    openshift           897b6b11fd22        About an hour ago   286MB
 levmichael3/django-gulp-nginx-gulp     openshift           d19da14ec3db        About an hour ago   734MB
@@ -197,7 +200,8 @@ levmichael3/django-gulp-nginx-django   openshift           3d0022cff6ce        A
 - Create the deployment menifests:
 
 ```
-# ansible-container --engine openshift deploy  --username levmichael3 --password ***** --push-to docker  --tag openshift
+
+#ansible-container --engine openshift deploy  --username levmichael3 --password ***** --push-to docker  --tag openshift
 Parsing conductor CLI args.
 Engine integration loaded. Preparing push.      engine=OpenShiftâ„¢
 Tagging index.docker.io/levmichael3/django-gulp-nginx-django
