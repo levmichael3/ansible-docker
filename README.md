@@ -244,10 +244,13 @@ https://galaxy.ansible.com/api/v1/roles/16501/versions/?page_size=50
 - downloading role from https://github.com/ansible/ansible-kubernetes-modules/archive/v0.3.1-6.tar.gz
 - extracting ansible.kubernetes-modules to /root/Development/ansible-docker/django-gulp-nginx/ansible-deployment/roles/ansible.kubernetes-modules
 - ansible.kubernetes-modules (v0.3.1-6) was installed successfully
-Conductor terminated. Cleaning up.      command_rc=0 conductor_id=d41c87c68192fe50ab934c33fdab27d2f7d5d8218c7e755fb8030ad20e1f9bd1 save_container=False```
+Conductor terminated. Cleaning up.      command_rc=0 conductor_id=d41c87c68192fe50ab934c33fdab27d2f7d5d8218c7e755fb8030ad20e1f9bd1 save_container=False
+
+```
 
 
 - run in OpenShift:
+
 
 ```
 # ansible-container  --engine openshift   run
