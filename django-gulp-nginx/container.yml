@@ -1,0 +1,104 @@
+version: '2'
+
+settings:
+
+  conductor:
+    base: 'centos:7'
+    volumes:
+    - ${PWD}/temp-space:/tmp
+
+  k8s_namespace:
+    name: demo
+    display_name: Ansible Container Demo 
+    description: Django framework demo 
+
+defaults:
+  POSTGRES_USER: django
+  POSTGRES_PASSWORD: sesame
+  POSTGRES_DB: django
+  DJANGO_ROOT: /django
+  DJANGO_USER: django
+  DJANGO_PORT: 8080
+  DJANGO_VENV: /venv
+  NODE_USER: node
+  NODE_HOME: /node
+  NODE_ROOT: ''
+  GULP_DEV_PORT: 8080
+
+services:
+  django:
+    from: 'centos:7'
+    roles:
+    - role: django-gunicorn
+    environment:
+      DATABASE_URL: 'pgsql://{{ POSTGRES_USER }}:{{ POSTGRES_PASSWORD }}@postgresql:5432/{{ POSTGRES_DB }}'
+      DJANGO_ROOT: '{{ DJANGO_ROOT }}'
+      DJANGO_VENV: '{{ DJANGO_VENV }}'
+    expose:
+    - '{{ DJANGO_PORT }}'
+    working_dir: '{{ DJANGO_ROOT }}'
+    links:
+    - postgresql
+    user: '{{ DJANGO_USER }}'
+    command: ['/usr/bin/dumb-init', '{{ DJANGO_VENV }}/bin/gunicorn', -w, '2', -b, '0.0.0.0:{{ DJANGO_PORT }}', 'project.wsgi:application']
+    entrypoint: [/usr/bin/entrypoint.sh]
+    dev_overrides:
+      volumes:
+      - '$PWD:{{ DJANGO_ROOT }}'
+      command: [/usr/bin/dumb-init, '{{ DJANGO_VENV }}/bin/python', manage.py, runserver, '0.0.0.0:{{ DJANGO_PORT }}']
+      depends_on:
+      - postgresql
+
+  gulp:
+    from: 'centos:7'
+    roles:
+    - role: gulp-static 
+    working_dir: '{{ NODE_HOME }}'
+    command: ['/bin/false']
+    environment:
+      NODE_HOME: '{{ NODE_HOME }}'
+    dev_overrides:
+      entrypoint: [/entrypoint.sh]
+      command: [/usr/bin/dumb-init, /usr/local/bin/gulp]
+      ports:
+      - '8080:{{ GULP_DEV_PORT }}'
+      - 3001:3001
+      links:
+      - django
+      volumes:
+      - '$PWD:{{ NODE_HOME }}'
+    openshift:
+      state: absent
+
+  nginx:
+    from: 'centos:7'
+    roles:
+    - role: ansible.nginx-container
+      ASSET_PATHS:
+      - /tmp/dist
+      PROXY: yes
+      PROXY_PASS: 'http://django:8080'
+      PROXY_LOCATION: "~* /(admin|api)"
+    ports:
+    - '{{ DJANGO_PORT }}:8000'
+    links:
+    - django
+    dev_overrides:
+      ports: []
+      command: /bin/false
+
+  postgresql:
+    # Uses a pre-built postgresql image from Docker Hub 
+    from: 'centos/postgresql-95-centos7:latest'
+    environment:
+    - 'POSTGRESQL_DATABASE={{ POSTGRES_DB }}'
+    - 'POSTGRESQL_USER={{ POSTGRES_USER }}'
+    - 'POSTGRESQL_PASSWORD={{ POSTGRES_PASSWORD }}'
+    expose:
+    - 5432
+
+registries:
+   local_openshift:
+     url: https://local.openshift     # The push-to URL, created by chouseknecht.minishift-up role
+     namespace: demo
+     pull_from_url: 172.30.1.1:5000   # The pull-from URL from within minishift

@@ -1,0 +1,106 @@
+---
+- name: Install dumb init
+  get_url:
+    dest: /usr/bin/dumb-init
+    url: https://github.com/Yelp/dumb-init/releases/download/v1.0.2/dumb-init_1.0.2_amd64
+    mode: 0775
+    validate_certs: no
+
+- name: Make node user
+  user:
+    name: "{{ NODE_USER }}"
+    state: present
+    createhome: yes
+    home: "{{ NODE_HOME }}/"
+    uid: 1000
+    group: root
+
+- name: Make node home
+  file:
+    path: "{{ NODE_HOME }}"
+    state: directory
+    owner: "{{ NODE_USER }}"
+    group: root
+    mode: 0777
+
+- name: Create dist directory 
+  file:
+    path: "{{ NODE_HOME }}/dist"
+    state: directory 
+    owner: "{{ NODE_USER }}"
+    group: root
+    mode: 0777
+ 
+- name: Install nodejs
+  yum:
+    name: "{{ item }}"
+    disable_gpg_check: yes
+  with_items:
+    - "{{ NODE_RPM_URL }}"
+    - git 
+    - which
+
+- name: Create /tmp/django
+  file:
+    path: /tmp/django
+    state: directory 
+    owner: "{{ NODE_USER }}"
+    group: root
+    mode: 0777 
+
+- name: Clean npm cache 
+  command: npm cache clean -f
+
+- name: Install the node helper
+  command: npm install -g n
+
+- name: Install the latest node
+  command: n stable
+
+- name: Copy frontend source files 
+  synchronize:
+    src: "/src/{{ item }}"
+    dest: "{{ NODE_HOME }}"
+  with_items:
+  - bower.json
+  - package.json
+  - gulpfile.js
+  - .bowerrc
+  - src
+
+- name: Install node packages 
+  command: npm install
+  args:
+    chdir: "{{ NODE_HOME }}"
+
+- name: Install gulp
+  command: npm install --global gulp-cli 
+
+- name: Install bower
+  command: npm install --global bower
+
+- name: Template entrypoint script
+  template:
+    src: entrypoint.sh.j2
+    dest: /entrypoint.sh
+    mode: 0777
+
+# Create static content and copy back to conductor,
+# making it available for Nginx build. 
+
+- name: Build static assets
+  command: gulp build
+  args:
+    chdir: "{{ NODE_HOME }}"
+
+- name: Install bower packages
+  command: bower install
+  args:
+    chdir: "{{ NODE_HOME }}"
+  remote_user: "{{ NODE_USER }}" 
+
+- name: Copy static assets to conductor
+  synchronize:
+    src: "{{ NODE_HOME }}/dist/" 
+    dest: /tmp/dist/
+    mode: pull 

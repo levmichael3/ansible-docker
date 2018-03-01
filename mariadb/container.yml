@@ -14,7 +14,8 @@ settings:
     - ./roles/
   project_name: mariadb-k8s
   k8s_auth:
-    config_file: /root/.config/gcloud/application_default_credentials.json
+    #config_file: /root/.config/gcloud/application_default_credentials.json
+    config_file: /root/.kube/config
 
   k8s_namespace:
     name: database

@@ -1,0 +1,17 @@
+setuptools>=38
+Django
+psycopg2==2.6.1
+gunicorn
+dj-database-url
+
+# Demo requirements
+djangorestframework
+markdown 
+django-filter
+dj-static
+django-appconf
+django-compressor
+drf-nested-routers
+six
+static3
+# wsgiref

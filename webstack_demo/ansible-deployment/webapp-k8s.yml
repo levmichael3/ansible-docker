@@ -1,0 +1,116 @@
+  - name: Manage the lifecycle of webapp-k8s on K8s
+    hosts: localhost
+    gather_facts: no
+    connection: local
+    # Include Ansible Kubernetes and OpenShift modules
+    roles:
+      - role: ansible.kubernetes-modules
+    vars_files: []
+    # Tasks for setting the application state. Valid tags include: start, stop, restart, destroy
+    tasks:
+      - name: Create namespace webapp
+        k8s_v1_namespace:
+            name: webapp
+            state: present
+        tags:
+          - start
+      - name: Destroy the application by removing namespace webapp
+        k8s_v1_namespace:
+            name: webapp
+            state: absent
+        tags:
+          - destroy
+      - name: Create service
+        k8s_v1_service:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: v1
+                kind: Service
+                metadata:
+                    name: webserver
+                    namespace: webapp
+                    labels:
+                        app: webapp
+                        service: webserver
+                spec:
+                    selector:
+                        app: webapp
+                        service: webserver
+                    ports:
+                      - protocol: TCP
+                        targetPort: 8000
+                        name: port-80-tcp
+                        port: 80
+        tags:
+          - start
+      - name: Stop running containers by scaling replicas down to 0
+        k8s_v1beta1_deployment:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: extensions/v1beta1
+                kind: deployment
+                metadata:
+                    name: webserver
+                    labels:
+                        app: webapp
+                        service: webserver
+                    namespace: webapp
+                spec:
+                    template:
+                        metadata:
+                            labels:
+                                app: webapp
+                                service: webserver
+                        spec:
+                            containers:
+                              - name: webserver
+                                securityContext: {}
+                                state: present
+                                ports:
+                                  - protocol: TCP
+                                    containerPort: 8000
+                                args: [/usr/bin/dumb-init, nginx, -c, /etc/nginx/nginx.conf]
+                                image: https://index.docker.io/levmichael3/webapp-k8s-webserver:kubernetes
+                    replicas: 0
+                    strategy:
+                        type: RollingUpdate
+        tags:
+          - stop
+          - restart
+      - name: Create deployment, and scale replicas up
+        k8s_v1beta1_deployment:
+            state: present
+            force: false
+            resource_definition:
+                apiVersion: extensions/v1beta1
+                kind: deployment
+                metadata:
+                    name: webserver
+                    labels:
+                        app: webapp
+                        service: webserver
+                    namespace: webapp
+                spec:
+                    template:
+                        metadata:
+                            labels:
+                                app: webapp
+                                service: webserver
+                        spec:
+                            containers:
+                              - name: webserver
+                                securityContext: {}
+                                state: present
+                                ports:
+                                  - protocol: TCP
+                                    containerPort: 8000
+                                args: [/usr/bin/dumb-init, nginx, -c, /etc/nginx/nginx.conf]
+                                image: https://index.docker.io/levmichael3/webapp-k8s-webserver:kubernetes
+                    replicas: 1
+                    strategy:
+                        type: RollingUpdate
+        tags:
+          - start
+          - restart

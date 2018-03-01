@@ -1,6 +1,13 @@
 version: '2'
 settings:
   conductor_base: centos:7
+  project_name: webapp-k8s
+  k8s_auth:
+    #config_file: /root/.config/gcloud/application_default_credentials.json
+    config_file: /root/.kube/config
+
+  k8s_namespace:
+    name: webapp
 
 services:
   webserver:
@@ -9,4 +16,7 @@ services:
         STATIC_ROOT: /MySite
     ports:
       - "80:8000"
-registries: {}
+registries: 
+  docker:
+    url: https://index.docker.io/
+    namespace: levmichael3
