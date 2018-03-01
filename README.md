@@ -86,7 +86,11 @@ CONTAINER ID        IMAGE                                      COMMAND          
 b6f5059f8077        mariadb-mariadb_container:20180226125105   "/usr/bin/dumb-init â€¦"   7 seconds ago       Up 6 seconds        0.0.0.0:3308->3306/tcp   mariadb_mariadb_container_1
 ```
 
-# Updated gcloud credentials and Enabled access using the token stored in the auth section
+# In order to use K8S or openshift update the config_file showing on http://docs.ansible.com/ansible-container/container_yml/reference.html#k8s-auth - use ` gcloud auth application-default login`
+
+
+
+# Deploy to K8S/Openshift
 
 Use `deploy` to deploy:
 
@@ -137,3 +141,104 @@ https://galaxy.ansible.com/api/v1/roles/16501/versions/?page_size=50
 Conductor terminated. Cleaning up.      command_rc=0 conductor_id=74ac339825a5c4278098a9931dc55a397c7123f433018d35ff3646579a9fc5ab save_container=False
 
 ```
+
+
+# Example from https://github.com/ansible/ansible-container-demo 
+
+
+
+- push the images to docker hub:
+
+```
+# ansible-container push  --username levmichael3 --password ****** --push-to docker.io/levmichael3 --tag openshift
+Parsing conductor CLI args.
+Engine integration loaded. Preparing push.      engine=Dockerâ„¢ daemon
+Tagging docker.io/levmichael3/django-gulp-nginx-django
+Pushing docker.io/levmichael3/django-gulp-nginx-django:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-django]
+Preparing
+Pushing
+Pushed
+Pushing
+Pushed
+openshift: digest: sha256:a5713004e511e6b76c0bd6b2f7c37d42d021e1227af88fb489a7df7830cc7011 size: 742
+Tagging docker.io/levmichael3/django-gulp-nginx-gulp
+Pushing docker.io/levmichael3/django-gulp-nginx-gulp:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-gulp]
+Preparing
+Pushing
+Mounted from levmichael3/django-gulp-nginx-django
+Pushing
+Pushed
+openshift: digest: sha256:4ad54c25da4e398b4c419e5c2a682cf2c8208eb6aa604a1b869066602065dee8 size: 742
+Tagging docker.io/levmichael3/django-gulp-nginx-nginx
+Pushing docker.io/levmichael3/django-gulp-nginx-nginx:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-nginx]
+Preparing
+Pushing
+Mounted from levmichael3/django-gulp-nginx-gulp
+Pushing
+Pushed
+openshift: digest: sha256:f248bf4c2cde54773872058b1e2a32043732a5168e18b89216ccbb2572350f6e size: 741
+Conductor terminated. Cleaning up.      command_rc=0 conductor_id=9f51f494f195550b390f31345a8e0cb00949629a2274803cc268fb98701a0b62 save_container=False
+```
+
+- images are there:
+
+```
+#  docker images levmichael3/*:openshift
+REPOSITORY                             TAG                 IMAGE ID            CREATED             SIZE
+levmichael3/django-gulp-nginx-nginx    openshift           897b6b11fd22        About an hour ago   286MB
+levmichael3/django-gulp-nginx-gulp     openshift           d19da14ec3db        About an hour ago   734MB
+levmichael3/django-gulp-nginx-django   openshift           3d0022cff6ce        About an hour ago   1.01GB
+```
+
+
+- Create the deployment menifests:
+
+```
+# ansible-container --engine openshift deploy  --username levmichael3 --password ***** --push-to docker  --tag openshift
+Parsing conductor CLI args.
+Engine integration loaded. Preparing push.      engine=OpenShiftâ„¢
+Tagging index.docker.io/levmichael3/django-gulp-nginx-django
+Pushing index.docker.io/levmichael3/django-gulp-nginx-django:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-django]
+Preparing
+Layer already exists
+openshift: digest: sha256:9b1755acfd0aeadb18883bf2d9276c0615b4b6c85f406d7d6776cd28a9c17c07 size: 742
+Tagging index.docker.io/levmichael3/django-gulp-nginx-gulp
+Pushing index.docker.io/levmichael3/django-gulp-nginx-gulp:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-gulp]
+Preparing
+Layer already exists
+openshift: digest: sha256:8bff25a2822620eff1aee30f0300ec42201785e8b058bbc319c9f6b826b5a229 size: 742
+Tagging index.docker.io/levmichael3/django-gulp-nginx-nginx
+Pushing index.docker.io/levmichael3/django-gulp-nginx-nginx:openshift...
+The push refers to repository [docker.io/levmichael3/django-gulp-nginx-nginx]
+Preparing
+Layer already exists
+openshift: digest: sha256:f0540c2497ef8ed8c66cce610ef3ab20ba85da5f6646d256806c255488879b88 size: 741
+Conductor terminated. Cleaning up.      command_rc=0 conductor_id=45fb5726576e8ae2a0ec7961126f95b2e4535bead045179d306cb267899f3d16 save_container=False
+Parsing conductor CLI args.
+Engine integration loaded. Preparing deploy.    engine=OpenShiftâ„¢
+Verifying image for django
+Verifying image for gulp
+Verifying image for nginx
+ansible-galaxy 2.5.0
+  config file = None
+  configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible-galaxy
+  python version = 2.7.5 (default, Aug  4 2017, 00:39:18) [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)]
+No config file found; using defaults
+Opened /root/.ansible_galaxy
+Processing role ansible.kubernetes-modules
+Opened /root/.ansible_galaxy
+- downloading role 'kubernetes-modules', owned by ansible
+https://galaxy.ansible.com/api/v1/roles/?owner__username=ansible&name=kubernetes-modules
+https://galaxy.ansible.com/api/v1/roles/16501/versions/?page_size=50
+- downloading role from https://github.com/ansible/ansible-kubernetes-modules/archive/v0.3.1-6.tar.gz
+- extracting ansible.kubernetes-modules to /root/Development/ansible-docker/django-gulp-nginx/ansible-deployment/roles/ansible.kubernetes-modules
+- ansible.kubernetes-modules (v0.3.1-6) was installed successfully
+Conductor terminated. Cleaning up.      command_rc=0 conductor_id=d41c87c68192fe50ab934c33fdab27d2f7d5d8218c7e755fb8030ad20e1f9bd1 save_container=False```
+
