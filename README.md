@@ -38,7 +38,7 @@ https://github.com/ansible/nginx-container
 
 ## PUSH
 ```
-ansible-container push  --username levmichael3 --password *** --push-to docker.io/levmichael3 --tag 1.0
+#ansible-container push  --username levmichael3 --password *** --push-to docker.io/levmichael3 --tag 1.0
 
 Parsing conductor CLI args.
 Engine integration loaded. Preparing push.      engine=Docker™ daemon
@@ -67,12 +67,16 @@ docker login
 docker -D pull levmichael3/webstack_demo-webserver
 ```
 
-# Run it (on docker-machine with ENVs loaded properly to work infron of the aws-sandbox)
+# Run it 
+
+(on docker-machine with ENVs loaded properly to work infron of the aws-sandbox)
 ```
 docker run -d -p 80:8000 --name webserver levmichael3/webstack_demo-webserver:latest
 ```
 
-# Use variable files with --var-files <file.yml>
+# Use variable files 
+
+with --var-files <file.yml>
 
 ```
 ansible-container --vars-files variable_files/dogs.yml build --no-container-cache
@@ -86,7 +90,8 @@ CONTAINER ID        IMAGE                                      COMMAND          
 b6f5059f8077        mariadb-mariadb_container:20180226125105   "/usr/bin/dumb-init â€¦"   7 seconds ago       Up 6 seconds        0.0.0.0:3308->3306/tcp   mariadb_mariadb_container_1
 ```
 
-# In order to use K8S or openshift update the config_file showing on http://docs.ansible.com/ansible-container/container_yml/reference.html#k8s-auth - use ` gcloud auth application-default login`
+# In order to use K8S or openshift update the config_file 
+showing on http://docs.ansible.com/ansible-container/container_yml/reference.html#k8s-auth - use ` gcloud auth application-default login`
 
 * in container.yml : Project name MUST match :
 ```
@@ -98,7 +103,7 @@ k8s_namespace:
 Use `deploy` to deploy:
 
 ```
-ansible-container --engine k8s deploy --username levmichael3 --password ***** --push-to docker  --tag kubernetes  
+#ansible-container --engine k8s deploy --username levmichael3 --password ***** --push-to docker  --tag kubernetes  
 
 
 Parsing conductor CLI args.
@@ -146,7 +151,9 @@ Conductor terminated. Cleaning up.      command_rc=0 conductor_id=74ac339825a5c4
 ```
 
 
-# Example from https://github.com/ansible/ansible-container-demo 
+# Example
+
+From https://github.com/ansible/ansible-container-demo 
 
 
 
