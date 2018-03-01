@@ -246,3 +246,49 @@ https://galaxy.ansible.com/api/v1/roles/16501/versions/?page_size=50
 - ansible.kubernetes-modules (v0.3.1-6) was installed successfully
 Conductor terminated. Cleaning up.      command_rc=0 conductor_id=d41c87c68192fe50ab934c33fdab27d2f7d5d8218c7e755fb8030ad20e1f9bd1 save_container=False```
 
+
+- run in OpenShift:
+
+```
+# ansible-container  --engine openshift   run
+Parsing conductor CLI args.
+Engine integration loaded. Preparing run.       engine=OpenShiftâ„¢
+Verifying service image service=django
+Verifying service image service=gulp
+Verifying service image service=nginx
+
+PLAY [Manage the lifecycle of django-gulp-nginx on OpenShift?] *****************
+
+TASK [Create project ansible-container-sandbox] ********************************
+  : [localhost]
+â–½
+TASK [Create service] **********************************************************
+changed: [localhost]
+
+TASK [Create service] **********************************************************
+changed: [localhost]
+
+TASK [Remove service] **********************************************************
+ok: [localhost]
+
+TASK [Create deployment, and scale replicas up] ********************************
+changed: [localhost]
+
+TASK [Create deployment, and scale replicas up] ********************************
+changed: [localhost]
+
+TASK [Create deployment, and scale replicas up] ********************************
+changed: [localhost]
+
+TASK [Remove deployment] *******************************************************
+ok: [localhost]
+
+TASK [Remove route] ************************************************************
+ok: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=9    changed=5    unreachable=0    failed=0
+
+All services running.   playbook_rc=0
+Conductor terminated. Cleaning up.      command_rc=0 conductor_id=5cad77885ec05dfeb2830b05cdc584b5513b097da405cc3bf11e2a7839678552 save_container=False
+```
