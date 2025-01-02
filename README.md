@@ -1,5 +1,7 @@
 # Guidelines for working with Ansible-Container & docker-machine flow of development
-
+<a href="https://github.com/devxb/gitanimals">
+  <img src="https://render.gitanimals.org/lines/levmichael3" width="1000" height="120"/>
+</a>
 # First take care of the *project skelton*
 ```
 ansible-container init 
